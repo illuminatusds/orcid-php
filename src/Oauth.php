@@ -489,7 +489,7 @@ class Oauth
             }
 
             $this->http->setHeader([
-                'Content-Type'  => 'application/vdn.orcid+json',
+                'Content-Type'  => 'application/vnd.orcid+json',
                 'Authorization' => 'Bearer ' . $this->getAccessToken()
             ]);
         } else {
@@ -506,7 +506,7 @@ class Oauth
      * @param   string  $orcid     the orcid to look up, if not already specified
      * @return  string
      **/
-    private function getApiEndpoint($endpoint, $orcid = null)
+    public function getApiEndpoint($endpoint, $orcid = null)
     {
         $url  = 'https://';
         $url .= $this->level . '.';
