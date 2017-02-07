@@ -144,6 +144,7 @@ class Profile
         $c->setOpt(CURLOPT_VERBOSE, true);
         $c->setHeader($headers);
         $result = $c->execute();
+        unlink($tmp_file);
         return $result;
     }
 }
