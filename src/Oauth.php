@@ -35,6 +35,13 @@ class Oauth
      * @var  string
      **/
     private $level = 'pub';
+    
+    /**
+     * The ORCID api version
+     *
+     * @var  string
+     **/
+    private $api_version = '2.0';
 
     /**
      * The ORCID environment type
@@ -478,9 +485,9 @@ class Oauth
      * @return  object
      * @throws  Exception
      **/
-    public function getProfile($orcid = null)
-    {
-        $this->http->setUrl($this->getApiEndpoint('orcid-profile', $orcid));
+    public function getProfile($version = '2.0', $orcid = null)
+    {   
+        $this->http->setUrl($this->getApiEndpoint('orcid-profile', $version, $orcid));
 
         if ($this->level == 'api') {
             // If using the members api, we have to have an access token set
@@ -506,13 +513,18 @@ class Oauth
      * @param   string  $orcid     the orcid to look up, if not already specified
      * @return  string
      **/
-    public function getApiEndpoint($endpoint, $orcid = null)
+    public function getApiEndpoint($endpoint, $version, $orcid = null)
     {
+        $allowed_api_versions = array('1.2', '2.0');
+        if (!in_array($allowed_api_versions, $version)) {
+            $version = $this->api_version;
+        }
+        
         $url  = 'https://';
         $url .= $this->level . '.';
         $url .= (!empty($this->environment)) ? $this->environment . '.' : '';
         $url .= self::HOSTNAME;
-        $url .= '/v1.2/';
+        $url .= '/v'.$version.'/';
         $url .= $orcid ?: $this->getOrcid();
         $url .= '/' . $endpoint;
 
