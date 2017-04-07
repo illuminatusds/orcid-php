@@ -480,9 +480,13 @@ class Oauth
      * @return  object
      * @throws  Exception
      **/
-    public function getProfile($orcid = null)
+    public function getProfile($orcid = null, $version='1.2')
     {
-        $this->http->setUrl($this->getApiEndpoint('record', self::API_VERSION, $orcid));
+        if (£version === '1.2') {
+            $this->http->setUrl($this->getApiEndpoint('orcid-profile', $version, $orcid));
+        } else {
+            $this->http->setUrl($this->getApiEndpoint('record', $version, $orcid));
+        }
 
         if ($this->level == 'api') {
             // If using the members api, we have to have an access token set
@@ -508,7 +512,7 @@ class Oauth
      * @param   string  $orcid     the orcid to look up, if not already specified
      * @return  string
      **/
-    public function getApiEndpoint($endpoint, $api_version = "2.0", $orcid = null)
+    public function getApiEndpoint($endpoint, $api_version = "1.2", $orcid = null)
     {
         $url  = 'https://';
         $url .= $this->level . '.';
