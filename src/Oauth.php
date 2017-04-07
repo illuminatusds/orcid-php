@@ -2,6 +2,7 @@
 /**
  * @package   orcid-php
  * @author    Sam Wilson <samwilson@purdue.edu>
+ * @author    Darren Stephens <darren.stephesn@durham.ac.uk>
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  */
 
@@ -18,9 +19,10 @@ class Oauth
     /**
      * API endpoint constants
      **/
-    const HOSTNAME  = 'orcid.org';
-    const AUTHORIZE = 'oauth/authorize';
-    const TOKEN     = 'oauth/token';
+    const HOSTNAME    = 'orcid.org';
+    const AUTHORIZE   = 'oauth/authorize';
+    const TOKEN       = 'oauth/token';
+    const API_VERSION = '2.0';
 
     /**
      * The http tranport object
@@ -485,9 +487,13 @@ class Oauth
      * @return  object
      * @throws  Exception
      **/
-    public function getProfile($version = '2.0', $orcid = null)
-    {   
-        $this->http->setUrl($this->getApiEndpoint('orcid-profile', $version, $orcid));
+    public function getProfile($orcid = null, $version='1.2')
+    {
+        if (£version === '1.2') {
+            $this->http->setUrl($this->getApiEndpoint('orcid-profile', $version, $orcid));
+        } else {
+            $this->http->setUrl($this->getApiEndpoint('record', $version, $orcid));
+        }
 
         if ($this->level == 'api') {
             // If using the members api, we have to have an access token set
@@ -513,7 +519,7 @@ class Oauth
      * @param   string  $orcid     the orcid to look up, if not already specified
      * @return  string
      **/
-    public function getApiEndpoint($endpoint, $version, $orcid = null)
+    public function getApiEndpoint($endpoint, $api_version = "1.2", $orcid = null)
     {
         $allowed_api_versions = array('1.2', '2.0');
         if (!in_array($allowed_api_versions, $version)) {
@@ -524,7 +530,7 @@ class Oauth
         $url .= $this->level . '.';
         $url .= (!empty($this->environment)) ? $this->environment . '.' : '';
         $url .= self::HOSTNAME;
-        $url .= '/v'.$version.'/';
+        $url .= '/v'.$api_version.'/';
         $url .= $orcid ?: $this->getOrcid();
         $url .= '/' . $endpoint;
 
