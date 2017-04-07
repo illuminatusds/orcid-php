@@ -2,6 +2,7 @@
 /**
  * @package   orcid-php
  * @author    Sam Wilson <samwilson@purdue.edu>
+ * @author    Darren Stephens <darren.stephesn@durham.ac.uk>
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  */
 
@@ -18,9 +19,10 @@ class Oauth
     /**
      * API endpoint constants
      **/
-    const HOSTNAME  = 'orcid.org';
-    const AUTHORIZE = 'oauth/authorize';
-    const TOKEN     = 'oauth/token';
+    const HOSTNAME    = 'orcid.org';
+    const AUTHORIZE   = 'oauth/authorize';
+    const TOKEN       = 'oauth/token';
+    const API_VERSION = '2.0';
 
     /**
      * The http tranport object
@@ -480,7 +482,7 @@ class Oauth
      **/
     public function getProfile($orcid = null)
     {
-        $this->http->setUrl($this->getApiEndpoint('orcid-profile', $orcid));
+        $this->http->setUrl($this->getApiEndpoint('record', self::API_VERSION, $orcid));
 
         if ($this->level == 'api') {
             // If using the members api, we have to have an access token set
@@ -506,13 +508,13 @@ class Oauth
      * @param   string  $orcid     the orcid to look up, if not already specified
      * @return  string
      **/
-    public function getApiEndpoint($endpoint, $orcid = null)
+    public function getApiEndpoint($endpoint, $api_version = "2.0", $orcid = null)
     {
         $url  = 'https://';
         $url .= $this->level . '.';
         $url .= (!empty($this->environment)) ? $this->environment . '.' : '';
         $url .= self::HOSTNAME;
-        $url .= '/v1.2/';
+        $url .= '/v'.$api_version.'/';
         $url .= $orcid ?: $this->getOrcid();
         $url .= '/' . $endpoint;
 

@@ -57,7 +57,7 @@ class Profile
     public function raw()
     {
         if (!isset($this->raw)) {
-            $this->raw = $this->oauth->getProfile()->{'orcid-profile'};
+            $this->raw = $this->oauth->getProfile()->{'record'};
         }
 
         return $this->raw;
@@ -68,11 +68,11 @@ class Profile
      *
      * @return  object
      **/
-    public function bio()
+    public function person()
     {
         $this->raw();
 
-        return $this->raw->{'orcid-bio'};
+        return $this->raw->{'person'};
     }
 
     /**
@@ -85,12 +85,12 @@ class Profile
         $this->raw();
 
         $email = null;
-        $bio   = $this->bio();
+        $bio   = $this->person();
 
-        if (isset($bio->{'contact-details'})) {
-            if (isset($bio->{'contact-details'}->email)) {
-                if (is_array($bio->{'contact-details'}->email) && isset($bio->{'contact-details'}->email[0])) {
-                    $email = $bio->{'contact-details'}->email[0]->value;
+        if (isset($person->{'emails'})) {
+            if (isset($person->{'emails'}->email)) {
+                if (is_array($person->{'emails'}->email) && isset($person->{'emails'}->email[0])) {
+                    $email = $person->{'emails'}->email[0]->email;
                 }
             }
         }
@@ -106,11 +106,11 @@ class Profile
     public function fullName()
     {
         $this->raw();
-        $details = $this->bio()->{'personal-details'};
+        $details = $this->person()->{'name'};
 
         return $details->{'given-names'}->value . ' ' . $details->{'family-name'}->value;
     }
-    
+
     /**
      * Saves the orcid-message xml provided to the correct scope
      *
@@ -118,21 +118,21 @@ class Profile
      **/
     public function save($scope, $xml)
     {
-        $endpoint = $this->oauth->getApiEndpoint($scope, $this->id());
+        $endpoint = $this->oauth->getApiEndpoint($scope, self::API_VERSION, $this->id());
         $headers = [
                 'Content-Type'  => 'application/vnd.orcid+xml',
                 'Authorization' => 'Bearer ' . $this->id()->getAccessToken()
             ];
-        
+
         $orcid_msg = stripslashes($xml);
-        
-        /* We need to set up a tmp file in order 
+
+        /* We need to set up a tmp file in order
          * to do the HTTP PUT request properly
          */
         $tmp_file = tmpfile();
         fwrite($tmp_file,$orcid_msg);
         fseek($tmp_file,0);
-    
+
         $c = new Curl;
 
         $c->setUrl($endpoint);
