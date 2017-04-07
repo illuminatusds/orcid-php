@@ -29,14 +29,22 @@ class Profile
     private $raw = null;
 
     /**
+     * The API version
+     *
+     * @var String
+     **/
+    private $api_version = "1.2";
+
+    /**
      * Constructs object instance
      *
      * @param   object  $oauth  the oauth object used for making calls to orcid
      * @return  void
      **/
-    public function __construct($oauth = null)
+    public function __construct($oauth = null, $version = "1.2")
     {
         $this->oauth = $oauth;
+        $this->api_version = $version;
     }
 
     /**
@@ -57,22 +65,44 @@ class Profile
     public function raw()
     {
         if (!isset($this->raw)) {
-            $this->raw = $this->oauth->getProfile()->{'record'};
+            if ($this->api_version === '1.2') {
+                $this->raw = $this->oauth->getProfile()->{'orcid-profile'};
+            } else {
+                $this->raw = $this->oauth->getProfile();
+            }
         }
 
         return $this->raw;
     }
 
     /**
-     * Grabs the ORCID bio
+     * Grabs the ORCID bio for v1.2
+     *
+     * @return  object
+     **/
+    public function bio()
+    {
+        if ($this->api_version === '1.2') {
+            $this->raw();
+            return $this->raw->{'orcid-bio'};
+        }
+
+        return null;
+    }
+
+    /**
+     * Grabs the ORCID person bio for API 2.0
      *
      * @return  object
      **/
     public function person()
     {
-        $this->raw();
+        if ($this->api_version === '2.0') {
+            $this->raw();
+            return $this->raw->{'person'};
+        }
 
-        return $this->raw->{'person'};
+        return null;
     }
 
     /**
@@ -85,12 +115,23 @@ class Profile
         $this->raw();
 
         $email = null;
-        $bio   = $this->person();
 
-        if (isset($person->{'emails'})) {
-            if (isset($person->{'emails'}->email)) {
-                if (is_array($person->{'emails'}->email) && isset($person->{'emails'}->email[0])) {
-                    $email = $person->{'emails'}->email[0]->email;
+        if ($this->api_version === '1.2') {
+            $bio = $this->bio();
+            if (isset($bio->{'contact-details'})) {
+                if (isset($bio->{'contact-details'}->email)) {
+                    if (is_array($bio->{'contact-details'}->email) && isset($bio->{'contact-details'}->email[0])) {
+                        $email = $bio->{'contact-details'}->email[0]->value;
+                    }
+                }
+            }
+        } else {
+            $person = $this->person();
+            if (isset($person->{'emails'})) {
+                if (isset($person->{'emails'}->email)) {
+                    if (is_array($person->{'emails'}->email) && isset($person->{'emails'}->email[0])) {
+                        $email = $person->{'emails'}->email[0]->email;
+                    }
                 }
             }
         }
@@ -106,9 +147,14 @@ class Profile
     public function fullName()
     {
         $this->raw();
-        $details = $this->person()->{'name'};
 
-        return $details->{'given-names'}->value . ' ' . $details->{'family-name'}->value;
+        if ($this->api_version === '1.2') {
+            $details = $this->bio()->{'personal-details'};
+            return $details->{'given-names'}->value . ' ' . $details->{'family-name'}->value;
+        } else {
+            $details = $this->person()->{'name'};
+            return $details->{'given-names'}->value . ' ' . $details->{'family-name'}->value;
+        }
     }
 
     /**
@@ -118,7 +164,7 @@ class Profile
      **/
     public function save($scope, $xml)
     {
-        $endpoint = $this->oauth->getApiEndpoint($scope, self::API_VERSION, $this->id());
+        $endpoint = $this->oauth->getApiEndpoint($scope, $this->api_version, $this->id());
         $headers = [
                 'Content-Type'  => 'application/vnd.orcid+xml',
                 'Authorization' => 'Bearer ' . $this->id()->getAccessToken()

@@ -11,7 +11,7 @@ use \Mockery as m;
 /**
  * Base ORCID oauth tests
  */
-class OauthTest extends \PHPUnit_Framework_TestCase
+class OauthTest extends m\Adapter\Phpunit\MockeryTestCase
 {
     /**
      * Gets a sample oauth object
@@ -23,6 +23,15 @@ class OauthTest extends \PHPUnit_Framework_TestCase
         $http = m::mock('Orcid\Http\Curl');
 
         return new Oauth($http);
+    }
+
+    /**
+     * Tear down mock after any tests that run it.
+     *
+     **/
+    protected function tearDown()
+    {
+        m::close();
     }
 
     /**
@@ -371,7 +380,7 @@ class OauthTest extends \PHPUnit_Framework_TestCase
         $http = m::mock('Orcid\Http\Curl');
         $http->shouldReceive('execute', 'setHeader', 'setOpt')->andReturn(m::self())
              ->getMock()
-             ->shouldReceive('setUrl')->once()->with('https://pub.orcid.org/v1.2/0000-0000-0000-0000/orcid-profile');
+             ->shouldReceive('setUrl')->once()->with('https://pub.orcid.org/v2.0/0000-0000-0000-0000/record');
 
         $oauth = m::mock('Orcid\Oauth', [$http])->makePartial();
         $oauth->getProfile('0000-0000-0000-0000');
@@ -387,7 +396,7 @@ class OauthTest extends \PHPUnit_Framework_TestCase
         $http = m::mock('Orcid\Http\Curl');
         $http->shouldReceive('execute', 'setHeader', 'setOpt')->andReturn(m::self())
              ->getMock()
-             ->shouldReceive('setUrl')->once()->with('https://pub.orcid.org/v1.2/0000-0000-0000-0000/orcid-profile');
+             ->shouldReceive('setUrl')->once()->with('https://pub.orcid.org/v2.0/0000-0000-0000-0000/record');
 
         $oauth = m::mock('Orcid\Oauth', [$http])->makePartial();
         $oauth->usePublicApi()->setOrcid('0000-0000-0000-0000')->getProfile();
@@ -403,7 +412,7 @@ class OauthTest extends \PHPUnit_Framework_TestCase
         $http = m::mock('Orcid\Http\Curl');
         $http->shouldReceive('execute', 'setHeader', 'setOpt')->andReturn(m::self())
              ->getMock()
-             ->shouldReceive('setUrl')->once()->with('https://api.orcid.org/v1.2/0000-0000-0000-0000/orcid-profile');
+             ->shouldReceive('setUrl')->once()->with('https://api.orcid.org/v2.0/0000-0000-0000-0000/record');
 
         $oauth = m::mock('Orcid\Oauth', [$http])->makePartial();
         $oauth->useMembersApi()
@@ -423,7 +432,7 @@ class OauthTest extends \PHPUnit_Framework_TestCase
         $http = m::mock('Orcid\Http\Curl');
         $http->shouldReceive('execute', 'setHeader', 'setOpt')->andReturn(m::self())
              ->getMock()
-             ->shouldReceive('setUrl')->once()->with('https://api.orcid.org/v1.2/0000-0000-0000-0000/orcid-profile');
+             ->shouldReceive('setUrl')->once()->with('https://api.orcid.org/v2.0/0000-0000-0000-0000/record');
 
         $oauth = m::mock('Orcid\Oauth', [$http])->makePartial();
         $oauth->useMembersApi()->getProfile('0000-0000-0000-0000');
@@ -439,7 +448,7 @@ class OauthTest extends \PHPUnit_Framework_TestCase
         $http = m::mock('Orcid\Http\Curl');
         $http->shouldReceive('execute', 'setHeader', 'setOpt')->andReturn(m::self())
              ->getMock()
-             ->shouldReceive('setUrl')->once()->with('https://api.sandbox.orcid.org/v1.2/0000-0000-0000-0000/orcid-profile');
+             ->shouldReceive('setUrl')->once()->with('https://api.sandbox.orcid.org/v2.0/0000-0000-0000-0000/record');
 
         $oauth = m::mock('Orcid\Oauth', [$http])->makePartial();
         $oauth->useMembersApi()
@@ -458,12 +467,13 @@ class OauthTest extends \PHPUnit_Framework_TestCase
         $http = m::mock('Orcid\Http\Curl');
         $http->shouldReceive('execute', 'setHeader', 'setOpt')->andReturn(m::self())
              ->getMock()
-             ->shouldReceive('setUrl')->once()->with('https://pub.sandbox.orcid.org/v1.2/0000-0000-0000-0000/orcid-profile');
+             ->shouldReceive('setUrl')->once()->with('https://pub.sandbox.orcid.org/v2.0/0000-0000-0000-0000/record');
 
         $oauth = m::mock('Orcid\Oauth', [$http])->makePartial();
         $oauth->usePublicApi()
               ->useSandboxEnvironment()
               ->setAccessToken('123456789')
               ->getProfile('0000-0000-0000-0000');
+
     }
 }
