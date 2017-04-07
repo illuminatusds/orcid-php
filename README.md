@@ -50,7 +50,7 @@ $oauth->authenticate($_GET['code']);
 // Check for successful authentication
 if ($oauth->isAuthenticated())
 {
-	$orcid = new Profile($oauth);
+	$orcid = new Profile($oauth, '2.0');
 
 	// Get ORCID iD
 	$id = $orcid->id();
@@ -68,13 +68,15 @@ To be implemented...
 As alluded to in the samples above, once successfully authenticated via OAuth, you can make subsequent requests to the other public/member APIs. For example:
 
 ```php
-$orcid = new Profile($oauth);
+$orcid = new Profile($oauth, '2.0');
 
 // Get ORCID profile details
 $id    = $orcid->id();
 $email = $orcid->email();
 $name  = $orcid->fullName();
 ```
+
+By default, a Profile object will be created usiong the v1.2 API data structure. Passing the value ``'2.0'`` as the second, version, parament, will use the newer, v2.0 API record structure.
 
 The profile class currently only supports a limited number of helper methods for directly accessing elements from the profile data. This will be expanded upon as needed. The raw JSON data from the profile output is available by calling the raw() method.
 
