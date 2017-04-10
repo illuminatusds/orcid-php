@@ -2,6 +2,7 @@
 /**
  * @package   orcid-php
  * @author    Sam Wilson <samwilson@purdue.edu>
+ * @author    Darren Stephens <darren.stephesn@durham.ac.uk>
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  */
 
@@ -33,7 +34,7 @@ class Profile
      *
      * @var String
      **/
-    private $api_version = "1.2";
+    private $api_version = "2.0";
 
     /**
      * Constructs object instance
@@ -41,7 +42,7 @@ class Profile
      * @param   object  $oauth  the oauth object used for making calls to orcid
      * @return  void
      **/
-    public function __construct($oauth = null, $version = "1.2")
+    public function __construct($oauth = null, $version = "2.0")
     {
         $this->oauth = $oauth;
         $this->api_version = $version;
@@ -65,10 +66,10 @@ class Profile
     public function raw()
     {
         if (!isset($this->raw)) {
-            if ($this->api_version === '1.2') {
-                $this->raw = $this->oauth->getProfile()->{'orcid-profile'};
+            if ($this->api_version === '2.0') {
+                $this->raw = $this->oauth->getProfile($this->id(), $this->api_version);
             } else {
-                $this->raw = $this->oauth->getProfile();
+                $this->raw = $this->oauth->getProfile()->{'orcid-profile'};
             }
         }
 
@@ -86,7 +87,6 @@ class Profile
             $this->raw();
             return $this->raw->{'orcid-bio'};
         }
-
         return null;
     }
 
@@ -101,7 +101,6 @@ class Profile
             $this->raw();
             return $this->raw->{'person'};
         }
-
         return null;
     }
 
@@ -116,21 +115,21 @@ class Profile
 
         $email = null;
 
-        if ($this->api_version === '1.2') {
-            $bio = $this->bio();
-            if (isset($bio->{'contact-details'})) {
-                if (isset($bio->{'contact-details'}->email)) {
-                    if (is_array($bio->{'contact-details'}->email) && isset($bio->{'contact-details'}->email[0])) {
-                        $email = $bio->{'contact-details'}->email[0]->value;
-                    }
-                }
-            }
-        } else {
+        if ($this->api_version === '2.0') {
             $person = $this->person();
             if (isset($person->{'emails'})) {
                 if (isset($person->{'emails'}->email)) {
                     if (is_array($person->{'emails'}->email) && isset($person->{'emails'}->email[0])) {
                         $email = $person->{'emails'}->email[0]->email;
+                    }
+                }
+            }
+        } else {
+            $bio = $this->bio();
+            if (isset($bio->{'contact-details'})) {
+                if (isset($bio->{'contact-details'}->email)) {
+                    if (is_array($bio->{'contact-details'}->email) && isset($bio->{'contact-details'}->email[0])) {
+                        $email = $bio->{'contact-details'}->email[0]->value;
                     }
                 }
             }
@@ -148,11 +147,11 @@ class Profile
     {
         $this->raw();
 
-        if ($this->api_version === '1.2') {
-            $details = $this->bio()->{'personal-details'};
+        if ($this->api_version === '2.0') {
+            $details = $this->person()->{'name'};
             return $details->{'given-names'}->value . ' ' . $details->{'family-name'}->value;
         } else {
-            $details = $this->person()->{'name'};
+            $details = $this->bio()->{'personal-details'};
             return $details->{'given-names'}->value . ' ' . $details->{'family-name'}->value;
         }
     }

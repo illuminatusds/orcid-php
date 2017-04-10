@@ -477,15 +477,16 @@ class Oauth
      * assuming you use the public API endpoint.
      *
      * @param   string  $orcid  the orcid to look up, if not already set as class prop
+     * @param   string  $api_version the api version to query
      * @return  object
      * @throws  Exception
      **/
-    public function getProfile($orcid = null, $version='1.2')
+    public function getProfile($orcid = null, $api_version = '2.0')
     {
-        if (£version === '1.2') {
-            $this->http->setUrl($this->getApiEndpoint('orcid-profile', $version, $orcid));
+        if ($api_version === '2.0') {
+            $this->http->setUrl($this->getApiEndpoint('record', $api_version, $orcid));
         } else {
-            $this->http->setUrl($this->getApiEndpoint('record', $version, $orcid));
+            $this->http->setUrl($this->getApiEndpoint('orcid-profile', $api_version, $orcid));
         }
 
         if ($this->level == 'api') {
@@ -499,7 +500,7 @@ class Oauth
                 'Authorization' => 'Bearer ' . $this->getAccessToken()
             ]);
         } else {
-            $this->http->setHeader('Accept: application/orcid+json');
+            $this->http->setHeader('Accept: application/vnd.orcid+json');
         }
 
         return json_decode($this->http->execute());
@@ -508,11 +509,12 @@ class Oauth
     /**
      * Creates the qualified api endpoint for retrieving the desired data
      *
-     * @param   string  $endpoint  the shortname of the endpoint
-     * @param   string  $orcid     the orcid to look up, if not already specified
+     * @param   string  $endpoint     the shortname of the endpoint
+     * @param   string  $api_version  the api version to use
+     * @param   string  $orcid        the orcid to look up, if not already specified
      * @return  string
      **/
-    public function getApiEndpoint($endpoint, $api_version = "1.2", $orcid = null)
+    public function getApiEndpoint($endpoint, $api_version = "2.0", $orcid = null)
     {
         $url  = 'https://';
         $url .= $this->level . '.';

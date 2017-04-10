@@ -2,6 +2,7 @@
 /**
  * @package   orcid-php
  * @author    Sam Wilson <samwilson@purdue.edu>
+ * @author    Darren Stephens <darren.stephesn@durham.ac.uk>
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  */
 
@@ -60,7 +61,7 @@ class ProfileTest extends m\Adapter\Phpunit\MockeryTestCase
         $oauth->shouldReceive('getOrcid')->andReturn('0000-0000-0000-0000');
         $oauth->shouldReceive('getProfile')->andReturn($contents);
 
-        $profile = new Profile($oauth);
+        $profile = new Profile($oauth, '1.2');
 
         return $profile;
     }
