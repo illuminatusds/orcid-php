@@ -10,7 +10,7 @@ use Orcid\Oauth;
 use \Mockery as m;
 
 /**
- * Base ORCID oauth tests
+ * Base ORCID Oauth tests
  */
 class OauthTest extends m\Adapter\Phpunit\MockeryTestCase
 {
@@ -389,7 +389,7 @@ class OauthTest extends m\Adapter\Phpunit\MockeryTestCase
              ->with('https://pub.orcid.org/v2.0/0000-0000-0000-0000/record');
 
         $oauth = m::mock('Orcid\Oauth', [$http])->makePartial();
-        $oauth->getProfile('0000-0000-0000-0000', '2.0');
+        $oauth->getProfile('0000-0000-0000-0000');
     }
 
     /**
@@ -447,7 +447,7 @@ class OauthTest extends m\Adapter\Phpunit\MockeryTestCase
              ->with('https://api.orcid.org/v2.0/0000-0000-0000-0000/record');
 
         $oauth = m::mock('Orcid\Oauth', [$http])->makePartial();
-        $oauth->useMembersApi()->getProfile('0000-0000-0000-0000');
+        $oauth->useMembersApi()->getProfile('0000-0000-0000-0000', '2.0');
     }
 
     /**
@@ -468,7 +468,7 @@ class OauthTest extends m\Adapter\Phpunit\MockeryTestCase
         $oauth->useMembersApi()
               ->useSandboxEnvironment()
               ->setAccessToken('123456789')
-              ->getProfile('0000-0000-0000-0000');
+              ->getProfile('0000-0000-0000-0000', '2.0');
     }
 
     /**
@@ -489,7 +489,7 @@ class OauthTest extends m\Adapter\Phpunit\MockeryTestCase
         $oauth->usePublicApi()
               ->useSandboxEnvironment()
               ->setAccessToken('123456789')
-              ->getProfile('0000-0000-0000-0000');
+              ->getProfile('0000-0000-0000-0000', '2.0');
 
     }
 }
