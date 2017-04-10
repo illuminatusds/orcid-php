@@ -76,7 +76,7 @@ $email = $orcid->email();
 $name  = $orcid->fullName();
 ```
 
-By default, a Profile object will be created usiong the v1.2 API data structure. Passing the value ``'2.0'`` as the second, version, parament, will use the newer, v2.0 API record structure.
+By default, a Profile object will be created usiong the v2.0 API data structure. Passing the value ``'1.2'`` as the second, version, parament, will use the older, v1.2 API record structure.
 
 The profile class currently only supports a limited number of helper methods for directly accessing elements from the profile data. This will be expanded upon as needed. The raw JSON data from the profile output is available by calling the raw() method.
 
