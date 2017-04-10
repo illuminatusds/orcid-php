@@ -490,6 +490,5 @@ class OauthTest extends m\Adapter\Phpunit\MockeryTestCase
               ->useSandboxEnvironment()
               ->setAccessToken('123456789')
               ->getProfile('0000-0000-0000-0000', '2.0');
-
     }
 }

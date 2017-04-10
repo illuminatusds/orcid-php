@@ -175,8 +175,8 @@ class Profile
          * to do the HTTP PUT request properly
          */
         $tmp_file = tmpfile();
-        fwrite($tmp_file,$orcid_msg);
-        fseek($tmp_file,0);
+        fwrite($tmp_file, $orcid_msg);
+        fseek($tmp_file, 0);
 
         $c = new Curl;
 
