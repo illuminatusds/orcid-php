@@ -37,6 +37,13 @@ class Oauth
      * @var  string
      **/
     private $level = 'pub';
+    
+    /**
+     * The ORCID api version
+     *
+     * @var  string
+     **/
+    private $api_version = '2.0';
 
     /**
      * The ORCID environment type
@@ -516,6 +523,11 @@ class Oauth
      **/
     public function getApiEndpoint($endpoint, $api_version = "2.0", $orcid = null)
     {
+        $allowed_api_versions = array('1.2', '2.0');
+        if (!in_array($allowed_api_versions, $version)) {
+            $version = $this->api_version;
+        }
+        
         $url  = 'https://';
         $url .= $this->level . '.';
         $url .= (!empty($this->environment)) ? $this->environment . '.' : '';
