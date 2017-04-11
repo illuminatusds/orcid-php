@@ -67,9 +67,12 @@ class Profile
     {
         if (!isset($this->raw)) {
             if ($this->api_version === '2.0') {
-                $this->raw = $this->oauth->getProfile($this->id(), $this->api_version);
+                $this->raw = $this->oauth
+                                ->getProfile($this->id(), $this->api_version);
             } else {
-                $this->raw = $this->oauth->getProfile()->{'orcid-profile'};
+                $this->raw = $this->oauth
+                                ->getProfile($this->id(), $this->api_version)
+                                ->{'orcid-profile'};
             }
         }
 
@@ -149,11 +152,10 @@ class Profile
 
         if ($this->api_version === '2.0') {
             $details = $this->person()->{'name'};
-            return $details->{'given-names'}->value . ' ' . $details->{'family-name'}->value;
         } else {
             $details = $this->bio()->{'personal-details'};
-            return $details->{'given-names'}->value . ' ' . $details->{'family-name'}->value;
         }
+        return $details->{'given-names'}->value . ' ' . $details->{'family-name'}->value;
     }
 
     /**
