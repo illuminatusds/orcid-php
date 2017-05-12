@@ -46,17 +46,17 @@ class OauthTest extends m\Adapter\Phpunit\MockeryTestCase
                       ->useProductionEnvironment()
                       ->setClientId('1234')
                       ->setScope('/authorize')
-                      ->setRedirectUri('here');
+                      ->setRedirectUri('http://some.arbitrary.host/redirect');
 
         $this->assertEquals(
-            'https://orcid.org/oauth/authorize?client_id=1234&scope=/authorize&redirect_uri=here&response_type=code',
+            'https://orcid.org/oauth/authorize?client_id=1234&scope=/authorize&redirect_uri=http%3A%2F%2Fsome.arbitrary.host%2Fredirect&response_type=code',
             $oauth->getAuthorizationUrl(),
             'Failed to fetch a properly formatted authorization URL'
         );
 
         $oauth->useMembersApi();
         $this->assertEquals(
-            'https://orcid.org/oauth/authorize?client_id=1234&scope=/authorize&redirect_uri=here&response_type=code',
+            'https://orcid.org/oauth/authorize?client_id=1234&scope=/authorize&redirect_uri=http%3A%2F%2Fsome.arbitrary.host%2Fredirect&response_type=code',
             $oauth->getAuthorizationUrl(),
             'Failed to fetch a properly formatted authorization URL'
         );

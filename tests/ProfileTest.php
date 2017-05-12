@@ -21,7 +21,7 @@ class ProfileTest extends m\Adapter\Phpunit\MockeryTestCase
      * @var  string
      **/
     private $complete    = '';
-    private $complete_v2 = '';
+    private $complete_api2 = '';
 
     /**
      * The basic profile path
@@ -29,7 +29,7 @@ class ProfileTest extends m\Adapter\Phpunit\MockeryTestCase
      * @var  string
      **/
     private $basic  = '';
-    private $basic_v2 = '';
+    private $basic_api2 = '';
 
     /**
      * Sets up tests
@@ -40,8 +40,8 @@ class ProfileTest extends m\Adapter\Phpunit\MockeryTestCase
     {
         $this->complete = __DIR__ . DIRECTORY_SEPARATOR . 'Fixtures' . DIRECTORY_SEPARATOR . 'profile-complete.json';
         $this->basic    = __DIR__ . DIRECTORY_SEPARATOR . 'Fixtures' . DIRECTORY_SEPARATOR . 'profile-basic.json';
-        $this->complete_v2 = __DIR__ . DIRECTORY_SEPARATOR . 'Fixtures' . DIRECTORY_SEPARATOR . 'profile-complete2.json';
-        $this->basic_v2    = __DIR__ . DIRECTORY_SEPARATOR . 'Fixtures' . DIRECTORY_SEPARATOR . 'profile-basic2.json';
+        $this->complete_api2 = __DIR__ . DIRECTORY_SEPARATOR . 'Fixtures' . DIRECTORY_SEPARATOR . 'profile-complete2.json';
+        $this->basic_api2    = __DIR__ . DIRECTORY_SEPARATOR . 'Fixtures' . DIRECTORY_SEPARATOR . 'profile-basic2.json';
     }
 
     /**
@@ -72,12 +72,12 @@ class ProfileTest extends m\Adapter\Phpunit\MockeryTestCase
      * @param   bool  $complete  Whether or not to return full or basic profile
      * @return  object
      **/
-    public function profilev2($complete_v2 = true)
+    public function profileApi2($complete_api2 = true)
     {
         $oauth = m::mock('Orcid\Oauth');
 
-        $complete_v2 = $complete_v2 ? 'complete_v2' : 'basic_v2';
-        $contents = json_decode(file_get_contents($this->$complete_v2));
+        $complete_api2 = $complete_api2 ? 'complete_api2' : 'basic_v2';
+        $contents = json_decode(file_get_contents($this->$complete_api2));
 
         // Tell the oauth method to return an empty ORCID iD
         $oauth->shouldReceive('getOrcid')->andReturn('0000-0000-0000-0000');
@@ -119,11 +119,11 @@ class ProfileTest extends m\Adapter\Phpunit\MockeryTestCase
      *
      * @return  void
      **/
-    public function testGetRawProfile2()
+    public function testGetRawApi2Profile()
     {
-        $contents = json_decode(file_get_contents($this->complete_v2));
+        $contents = json_decode(file_get_contents($this->complete_api2));
 
-        $this->assertEquals($contents, $this->profilev2()->raw(), 'Failed to fetch raw profile data');
+        $this->assertEquals($contents, $this->profileApi2()->raw(), 'Failed to fetch raw profile data');
     }
 
     /**
@@ -143,11 +143,11 @@ class ProfileTest extends m\Adapter\Phpunit\MockeryTestCase
      *
      * @return  void
      **/
-    public function testGetBio2()
+    public function testGetApi2Bio()
     {
-        $contents = json_decode(file_get_contents($this->complete_v2));
+        $contents = json_decode(file_get_contents($this->complete_api2));
 
-        $this->assertEquals($contents->{'person'}, $this->profilev2()->person(), 'Failed to fetch bio from profile data');
+        $this->assertEquals($contents->{'person'}, $this->profileApi2()->person(), 'Failed to fetch bio from profile data');
     }
 
     /**
@@ -165,9 +165,9 @@ class ProfileTest extends m\Adapter\Phpunit\MockeryTestCase
      *
      * @return  void
      **/
-    public function testGetEmailv2()
+    public function testGetApi2Email()
     {
-        $this->assertEquals('john_smith@genericurl.com', $this->profilev2()->email(), 'Failed to fetch email from profile data');
+        $this->assertEquals('john_smith@genericurl.com', $this->profileApi2()->email(), 'Failed to fetch email from profile data');
     }
 
     /**
