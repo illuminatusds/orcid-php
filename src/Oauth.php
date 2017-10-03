@@ -538,4 +538,22 @@ class Oauth
 
         return $url;
     }
+
+    /**
+     * Force log out on any existing orcid id loggied in before proceeding
+     * It's a bit of a kludge, but uses the behaviour described here:
+     * http://members.orcid.org/api/resources/customize#logout
+     *
+     * @return  string
+     **/
+    public function forceClientLogout()
+    {
+        $url  = 'https://';
+        $url .= $this->level . '.';
+        $url .= (!empty($this->environment)) ? $this->environment . '.' : '';
+        $url .= self::HOSTNAME;
+        $url .= '/userStatus.json?logUserOut=true';
+
+        return $url;
+    }
 }
