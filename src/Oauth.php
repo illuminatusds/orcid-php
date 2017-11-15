@@ -554,6 +554,8 @@ class Oauth
         $url .= self::HOSTNAME;
         $url .= '/userStatus.json?logUserOut=true';
 
-        return $url;
+        $this->http->setUrl($url);
+        $res = $this->http->execute();
+        return $res;
     }
 }
