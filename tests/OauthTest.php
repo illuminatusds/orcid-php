@@ -386,7 +386,7 @@ class OauthTest extends m\Adapter\Phpunit\MockeryTestCase
              ->getMock()
              ->shouldReceive('setUrl')
              ->once()
-             ->with('https://pub.orcid.org/v2.0/0000-0000-0000-0000/record');
+             ->with('https://pub.orcid.org/v2.1/0000-0000-0000-0000/record');
 
         $oauth = m::mock('Orcid\Oauth', [$http])->makePartial();
         $oauth->getProfile('0000-0000-0000-0000');
@@ -404,7 +404,7 @@ class OauthTest extends m\Adapter\Phpunit\MockeryTestCase
              ->getMock()
              ->shouldReceive('setUrl')
              ->once()
-             ->with('https://pub.orcid.org/v2.0/0000-0000-0000-0000/record');
+             ->with('https://pub.orcid.org/v2.1/0000-0000-0000-0000/record');
 
         $oauth = m::mock('Orcid\Oauth', [$http])->makePartial();
         $oauth->usePublicApi()->setOrcid('0000-0000-0000-0000')->getProfile();
@@ -422,7 +422,7 @@ class OauthTest extends m\Adapter\Phpunit\MockeryTestCase
              ->getMock()
              ->shouldReceive('setUrl')
              ->once()
-             ->with('https://api.orcid.org/v2.0/0000-0000-0000-0000/record');
+             ->with('https://api.orcid.org/v2.1/0000-0000-0000-0000/record');
 
         $oauth = m::mock('Orcid\Oauth', [$http])->makePartial();
         $oauth->useMembersApi()
@@ -444,10 +444,10 @@ class OauthTest extends m\Adapter\Phpunit\MockeryTestCase
              ->getMock()
              ->shouldReceive('setUrl')
              ->once()
-             ->with('https://api.orcid.org/v2.0/0000-0000-0000-0000/record');
+             ->with('https://api.orcid.org/v2.1/0000-0000-0000-0000/record');
 
         $oauth = m::mock('Orcid\Oauth', [$http])->makePartial();
-        $oauth->useMembersApi()->getProfile('0000-0000-0000-0000', '2.0');
+        $oauth->useMembersApi()->getProfile('0000-0000-0000-0000', '2.1');
     }
 
     /**
@@ -455,7 +455,7 @@ class OauthTest extends m\Adapter\Phpunit\MockeryTestCase
      *
      * @return  void
      **/
-    public function testGetMemberSandboxProfileUsesProperUrl()
+    public function testGetMemberSandboxProfileUsesProper20Url()
     {
         $http = m::mock('Orcid\Http\Curl');
         $http->shouldReceive('execute', 'setHeader', 'setOpt')->andReturn(m::self())
@@ -476,7 +476,28 @@ class OauthTest extends m\Adapter\Phpunit\MockeryTestCase
      *
      * @return  void
      **/
-    public function testGetPublicSandboxProfileUsesProperUrl()
+    public function testGetMemberSandboxProfileUsesProper21Url()
+    {
+        $http = m::mock('Orcid\Http\Curl');
+        $http->shouldReceive('execute', 'setHeader', 'setOpt')->andReturn(m::self())
+             ->getMock()
+             ->shouldReceive('setUrl')
+             ->once()
+             ->with('https://api.sandbox.orcid.org/v2.1/0000-0000-0000-0000/record');
+
+        $oauth = m::mock('Orcid\Oauth', [$http])->makePartial();
+        $oauth->useMembersApi()
+              ->useSandboxEnvironment()
+              ->setAccessToken('123456789')
+              ->getProfile('0000-0000-0000-0000', '2.1');
+    }
+
+    /**
+     * Test to make we use the proper sandbox url when fetching a sandbox profile
+     *
+     * @return  void
+     **/
+    public function testGetPublicSandboxProfileUsesProper20Url()
     {
         $http = m::mock('Orcid\Http\Curl');
         $http->shouldReceive('execute', 'setHeader', 'setOpt')->andReturn(m::self())
@@ -490,5 +511,26 @@ class OauthTest extends m\Adapter\Phpunit\MockeryTestCase
               ->useSandboxEnvironment()
               ->setAccessToken('123456789')
               ->getProfile('0000-0000-0000-0000', '2.0');
+    }
+
+    /**
+     * Test to make we use the proper sandbox url when fetching a sandbox profile
+     *
+     * @return  void
+     **/
+    public function testGetPublicSandboxProfileUsesProper21Url()
+    {
+        $http = m::mock('Orcid\Http\Curl');
+        $http->shouldReceive('execute', 'setHeader', 'setOpt')->andReturn(m::self())
+             ->getMock()
+             ->shouldReceive('setUrl')
+             ->once()
+             ->with('https://pub.sandbox.orcid.org/v2.1/0000-0000-0000-0000/record');
+
+        $oauth = m::mock('Orcid\Oauth', [$http])->makePartial();
+        $oauth->usePublicApi()
+              ->useSandboxEnvironment()
+              ->setAccessToken('123456789')
+              ->getProfile('0000-0000-0000-0000', '2.1');
     }
 }
