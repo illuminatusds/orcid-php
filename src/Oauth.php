@@ -22,7 +22,13 @@ class Oauth
     const HOSTNAME    = 'orcid.org';
     const AUTHORIZE   = 'oauth/authorize';
     const TOKEN       = 'oauth/token';
-    const API_VERSION = '2.0';
+
+    /**
+     * update the ORCID API default to 2.1. This is functionally equivalent to 2.0 but forces
+     * all connections through https by default. All of the connection endpoints already used https,
+     * so this is quite a short job.
+     **/
+    const API_VERSION = '2.1';
 
     /**
      * The http tranport object
@@ -43,7 +49,7 @@ class Oauth
      *
      * @var  string
      **/
-    private $api_version = '2.0';
+    //private API_VERSION = self::API_VERSION;
 
     /**
      * The ORCID environment type
@@ -488,9 +494,9 @@ class Oauth
      * @return  object
      * @throws  Exception
      **/
-    public function getProfile($orcid = null, $api_version = '2.0')
+    public function getProfile($orcid = null, $api_version = self::API_VERSION)
     {
-        if ($api_version === '2.0') {
+        if ($api_version >= '2.0') {
             $this->http->setUrl($this->getApiEndpoint('record', $api_version, $orcid));
         } else {
             $this->http->setUrl($this->getApiEndpoint('orcid-profile', $api_version, $orcid));
@@ -521,9 +527,9 @@ class Oauth
      * @param   string  $orcid        the orcid to look up, if not already specified
      * @return  string
      **/
-    public function getApiEndpoint($endpoint, $api_version = "2.0", $orcid = null)
+    public function getApiEndpoint($endpoint, $api_version = self::API_VERSION, $orcid = null)
     {
-        $allowed_api_versions = array('1.2', '2.0');
+        $allowed_api_versions = array('1.2', '2.0', '2.1');
         if (!in_array($api_version, $allowed_api_versions)) {
             $version = $this->api_version;
         }
